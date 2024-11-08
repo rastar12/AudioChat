@@ -1,9 +1,9 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
-import { app } from '../firebase';
-import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { app } from "../firebase";
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { StreamVideoClient, User } from "@stream-io/video-react-sdk";
-import { useUser } from '../user-context'; 
+import { useUser } from "../user-context";
 
 export default function GoogleSignInButton() {
   const navigate = useNavigate();
@@ -16,61 +16,66 @@ export default function GoogleSignInButton() {
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      // Consolidate data into an object
+      // Consolidate user data
       const userData = {
-        name: result.user.displayName,
-        email: result.user.email,
-        photo: result.user.photoURL,
+        id: result.user.displayName,
+        username: result.user.email,
+        image: result.user.photoURL,
       };
-
+  
+      console.log('User Data:', userData);  // Log user data to verify
+  
       // Send the consolidated user data to the backend
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('http://localhost:3001/api/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
       });
-
+  
+      // Check if response is OK
       if (!res.ok) {
+        const errorData = await res.json();
+        console.error('Error from backend:', errorData);  // Log the error response
         throw new Error("Failed to fetch token");
       }
-
+  
       const data = await res.json();
-      console.log(data);
-
+      console.log('Response from backend:', data);
+      
+  
       const user: User = {
-        id: userData.email, // Using email as the user ID, you may want to adjust this based on your design
-        name: userData.name,
+        id: userData.id,
+        Name: userData.username,
       };
-
+  
       // Initialize Stream Video Client with the token
       const myClient = new StreamVideoClient({
-        apiKey: import.meta.env.VITE_API_KEY,
+        apiKey:"ep6kancczz9d",
         user,
-        token: data.token, // Make sure the token is available in data
+        token: data.token,
       });
-
-      // Set cookie expiration
+  
       const expires = new Date();
       expires.setDate(expires.getDate() + 1);
-
+  
       // Store token and user data in cookies
       cookies.set("token", data.token, { expires });
-      cookies.set("username", userData.email, { expires }); // Ensure you're setting the username correctly
-      cookies.set("name", userData.name, { expires });
-
+      cookies.set("username", userData.username, { expires });
+      cookies.set("name", userData.username, { expires });
+  
       // Set the user and client in context
       setClient(myClient);
-      setUser({ name: userData.name, username: userData.email }); // Adjust as necessary
-
-      // Redirect to the main page after successful sign-in
+      setUser({ name: userData.username, Username: userData.username });
+  
       navigate('/');
-   
+     
     } catch (error) {
       console.error('Could not sign in with Google', error);
     }
   };
+  
 
   return (
     <button

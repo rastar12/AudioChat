@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { client } from '../stream-client.js'; 
+import { client } from '../router/stream-client.js';
 
 export const Google = async (req, res, next) => {
   try {

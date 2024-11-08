@@ -35,13 +35,13 @@ const SignIn: React.FC = () => {
       // Handle success (e.g., redirect to another page)
     } catch (error) {
       console.error("Error:", error);
-      // Handle error (e.g., display error message)
+    
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-transparent">
-      <div className="max-w-md w-full bg-gradient-to-r from-blue-800 to-purple-600 rounded-xl shadow-2xl overflow-hidden p-8 space-y-8 animate-slideInFromLeft">
+      <div className="max-w-md w-full bg-gradient-to-r from-blue-800 to-purple-600 rounded-xl shadow-2xl overflow-hidden p-8 space-y-8 animate-slideInFromLeft opacity-70">
         <h2 className="text-center text-4xl font-extrabold text-white animate-appear">
           Welcome
         </h2>
