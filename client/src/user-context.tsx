@@ -9,8 +9,6 @@ import React, {
   useEffect,
 } from "react";
 import {
-  StreamCall,
-  StreamVideo,
   StreamVideoClient,
   User as StreamUserType,
   Call,
@@ -27,9 +25,7 @@ interface UserContextProps {
   setUser: (user: User | null) => void;
   isLoading: boolean;
   client: StreamVideoClient | undefined;
-  setClient: React.Dispatch<
-    React.SetStateAction<StreamVideoClient | undefined>
-  >;
+  setClient: React.Dispatch<React.SetStateAction<StreamVideoClient | undefined>>;
   call: Call | undefined;
   setCall: React.Dispatch<React.SetStateAction<Call | undefined>>;
 }
@@ -48,12 +44,12 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
-export const UserProvider: FC<UserProviderProps> = (props) => {
+export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [client, setClient] = useState<StreamVideoClient>();
   const [call, setCall] = useState<Call>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const cookies = new Cookies(null, { path: "/" });
+  const cookies = new Cookies();
 
   useEffect(() => {
     const token = cookies.get("token");
@@ -64,20 +60,22 @@ export const UserProvider: FC<UserProviderProps> = (props) => {
       setIsLoading(false);
       return;
     }
-    const user: StreamUserType = {
-      id: username,
-      name: name,
+
+    const streamUser: StreamUserType = {
+      id: username, // `id` is mapped from `username`
+      name,
     };
 
     const myClient = new StreamVideoClient({
-      apiKey: import.meta.env.VITE_API_KEY,
-      user,
+      apiKey:"ep6kancczz9d",
+      user: streamUser,
       token,
     });
 
     setUser({ username, name });
     setClient(myClient);
     setIsLoading(false);
+
     return () => {
       myClient.disconnectUser();
       setClient(undefined);
@@ -89,7 +87,7 @@ export const UserProvider: FC<UserProviderProps> = (props) => {
     <UserContext.Provider
       value={{ user, setUser, isLoading, client, setClient, call, setCall }}
     >
-      {props.children}
+      {children}
     </UserContext.Provider>
   );
 };

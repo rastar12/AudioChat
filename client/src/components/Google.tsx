@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { StreamVideoClient, User } from "@stream-io/video-react-sdk";
 import { useUser } from "../user-context";
-
+import { v4 as uuidv4 } from 'uuid'; 
 export default function GoogleSignInButton() {
   const navigate = useNavigate();
   const cookies = new Cookies();
-  const { setUser, setClient } = useUser(); // Destructure setUser and setClient from useUser
+  const { setUser, setClient } = useUser();
 
   const handleGoogleClick = async () => {
     try {
@@ -16,66 +16,60 @@ export default function GoogleSignInButton() {
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      // Consolidate user data
       const userData = {
-        id: result.user.displayName,
+        id: uuidv4(), 
         username: result.user.email,
+        name: result.user.displayName,
         image: result.user.photoURL,
       };
-  
-      console.log('User Data:', userData);  // Log user data to verify
-  
-      // Send the consolidated user data to the backend
-      const res = await fetch('http://localhost:3001/api/auth/google', {
-        method: 'POST',
+
+      console.log("User Data:", userData);
+
+      const res = await fetch("http://localhost:3001/api/auth/google", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+
         },
         body: JSON.stringify(userData),
       });
-  
-      // Check if response is OK
+
       if (!res.ok) {
         const errorData = await res.json();
-        console.error('Error from backend:', errorData);  // Log the error response
+        console.error("Error from backend:", errorData);
         throw new Error("Failed to fetch token");
       }
-  
+
       const data = await res.json();
-      console.log('Response from backend:', data);
-      
-  
+      console.log("Response from backend:", data);
+
       const user: User = {
-        id: userData.id,
-        Name: userData.username,
+        id: data.id,
+        name: data.name,
       };
-  
-      // Initialize Stream Video Client with the token
+
       const myClient = new StreamVideoClient({
-        apiKey:"ep6kancczz9d",
+        apiKey: "ep6kancczz9d",
         user,
         token: data.token,
       });
-  
+
       const expires = new Date();
       expires.setDate(expires.getDate() + 1);
-  
-      // Store token and user data in cookies
+
       cookies.set("token", data.token, { expires });
       cookies.set("username", userData.username, { expires });
-      cookies.set("name", userData.username, { expires });
-  
-      // Set the user and client in context
+      cookies.set("name", userData.name, { expires });
+
       setClient(myClient);
-      setUser({ name: userData.username, Username: userData.username });
-  
-      navigate('/');
-     
+      setUser({ name: userData.name, username: userData.username });
+
+
+      navigate("/");
     } catch (error) {
-      console.error('Could not sign in with Google', error);
+      console.error("Could not sign in with Google", error);
     }
   };
-  
 
   return (
     <button

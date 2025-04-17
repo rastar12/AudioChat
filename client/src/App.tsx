@@ -5,15 +5,14 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-import Home from "./pages/home.tsx";
 import SignIn from './pages/SignIn.tsx';
 import Room from "./pages/Room";
 import { StreamCall } from "@stream-io/video-react-sdk";
 import { useUser } from "./user-context";
 import Cookies from "universal-cookie";
 
-// You can import an image directly or use a URL
 import backgroundImage from './assets/background1.jpg'; 
+import Home from "./pages/main/index.tsx";
 
 export default function App() {
   const { call, setUser, setCall } = useUser();

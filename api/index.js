@@ -1,3 +1,4 @@
+/*
 import express from "express";
 import cors from "cors";
 import authRoutes from './router/Auth.router.js'
@@ -14,8 +15,8 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+*/
 
-/*
 import express from 'express';
 import mongoose from 'mongoose';
 import authRouter from './router/Auth.router.js'
@@ -36,4 +37,3 @@ app.listen(3000,()=>{
 );
 
 app.use('/api/auth',authRouter);
-*/
