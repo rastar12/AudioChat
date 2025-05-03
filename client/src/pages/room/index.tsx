@@ -17,7 +17,6 @@ export const Room = () => {
     useCallCustomData,
     useParticipants,
     useCallCreatedBy,
-    useHasPermissions,
   } = useCallStateHooks();
   const { user } = useUser();
   const call = useCall();

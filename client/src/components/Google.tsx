@@ -25,7 +25,7 @@ export default function GoogleSignInButton() {
 
       console.log("User Data:", userData);
 
-      const res = await fetch("http://localhost:3001/api/auth/google", {
+      const res = await fetch("http://localhost:3000/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export default function GoogleSignInButton() {
       cookies.set("name", userData.name, { expires });
 
       setClient(myClient);
-      setUser({ name: userData.name, username: userData.username });
+      setUser({ name: userData.name ?? "Unknown Name", username: userData.username ?? "Unknown Username" });
 
 
       navigate("/");
